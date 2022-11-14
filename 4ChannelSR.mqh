@@ -123,8 +123,8 @@ bool C4ChannelSR::Calculate()
    for (; i<barCnt; i++)
    {
       m_ChsrData[m_ChsrTotal].time = barRates[i].time;
-      m_ChsrData[m_ChsrTotal].step = (barRates[i].high-barRates[i].low)/4;
-      m_ChsrData[m_ChsrTotal].price = m_ChsrData[m_ChsrTotal].step*2+barRates[i].low;
+      m_ChsrData[m_ChsrTotal].stepSR = (barRates[i].high-barRates[i].low)/4;
+      m_ChsrData[m_ChsrTotal].mainPrice = m_ChsrData[m_ChsrTotal].stepSR*2+barRates[i].low;
       m_ChsrTotal++;
    }
    

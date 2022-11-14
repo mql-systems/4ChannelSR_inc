@@ -32,6 +32,11 @@ class C4ChannelSR
       //---
       bool              Init(const string symbol, const ENUM_TIMEFRAMES period, const int calcBarsCount);
       bool              Calculate();
+      //---
+      string            Symbol() { return m_Symbol;    };
+      ENUM_TIMEFRAMES   Period() { return m_Period;    };
+      int               Total()  { return m_ChsrTotal; };
+      ChannelSRInfo     At(const int pos) const;
 };
 
 //+------------------------------------------------------------------+
@@ -126,6 +131,18 @@ bool C4ChannelSR::Calculate()
    m_NewBarTime = newBarTime;
    
    return true;
+}
+
+//+------------------------------------------------------------------+
+//| Access to data in the specified position                         |
+//+------------------------------------------------------------------+
+ChannelSRInfo C4ChannelSR::At(const int pos) const
+{
+   if (pos > -1 && pos < m_ChsrTotal)
+      return m_ChsrData[pos];
+   
+   ChannelSRInfo ChsrEmpty;
+   return ChsrEmpty;
 }
 
 //+------------------------------------------------------------------+

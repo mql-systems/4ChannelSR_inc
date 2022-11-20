@@ -26,6 +26,9 @@ class C4ChannelSR
       ChannelSRInfo     m_ChsrData[];
       int               m_ChsrTotal;
    
+   protected:
+      datetime          CalcNextZoneTime(const datetime dt);
+   
    public:
                         C4ChannelSR(void);
                        ~C4ChannelSR(void);
@@ -103,7 +106,7 @@ bool C4ChannelSR::Calculate()
    }
    
    //--- new bar
-   datetime newBarTime = iTime(m_Symbol, m_Period, 1);
+   datetime newBarTime = iTime(m_Symbol, m_Period, 0);
    if (newBarTime == 0)
       return false;
    if (m_NewBarTime == newBarTime)
@@ -112,27 +115,52 @@ bool C4ChannelSR::Calculate()
    //--- getting the data of new bars
    MqlRates barRates[];
    int barCnt = CopyRates(m_Symbol, m_Period, m_NewBarTime, newBarTime, barRates);
-   if (barCnt < 2 || m_NewBarTime != barRates[0].time)
+   if (barCnt < 3 || m_NewBarTime != barRates[0].time)
       return false;
    
    //--- calc
    int i = 1; // the zero element is always calculated
-   if (ArrayResize(m_ChsrData, m_ChsrTotal+barCnt-1, 100) == -1)
+   int calcBarCnt = barCnt-1;
+   if (ArrayResize(m_ChsrData, m_ChsrTotal+calcBarCnt-1, 100) == -1)
       return false;
    
-   for (; i<barCnt; i++)
+   for (; i<calcBarCnt; i++)
    {
-      m_ChsrData[m_ChsrTotal].time = barRates[i].time;
       m_ChsrData[m_ChsrTotal].high = barRates[i].high;
       m_ChsrData[m_ChsrTotal].low = barRates[i].low;
       m_ChsrData[m_ChsrTotal].stepSR = (barRates[i].high-barRates[i].low)/4;
       m_ChsrData[m_ChsrTotal].mainPrice = m_ChsrData[m_ChsrTotal].stepSR*2+barRates[i].low;
+      //---
+      m_ChsrData[m_ChsrTotal].time = barRates[i].time;
+      m_ChsrData[m_ChsrTotal].timeZoneStart = barRates[i+1].time;
+      m_ChsrData[m_ChsrTotal].timeZoneEnd = (i+2 < barCnt) ? barRates[i+2].time : CalcNextZoneTime(m_ChsrData[m_ChsrTotal].timeZoneStart);
+      //---
       m_ChsrTotal++;
    }
    
    m_NewBarTime = newBarTime;
    
    return true;
+}
+
+//+------------------------------------------------------------------+
+//| Calculate the datetime of the next zone                          |
+//+------------------------------------------------------------------+
+datetime C4ChannelSR::CalcNextZoneTime(const datetime dt)
+{
+   switch (m_Period)
+   {
+      case PERIOD_D1: return dt+86400;
+      case PERIOD_W1: return dt+604800;
+      default:
+      {
+         datetime dtMax = dt+2678400; // 32 days
+         MqlDateTime dtCheck;
+         TimeToStruct(dtMax, dtCheck);
+         
+         return dtMax-((dtCheck.day-1)*86400);
+      }
+   }
 }
 
 //+------------------------------------------------------------------+

@@ -1,2 +1,71 @@
-# 4ChannelSR_inc
-4 Channel Support/Resistance
+# 4ChannelSR
+
+MultiMQL library for calculating support/resistance from the previous day, divided by 4.
+
+![4ChannelSR](https://github.com/mql-systems/4ChannelSR_inc/raw/main/image.png)
+
+## Installation
+
+```bash
+git clone https://github.com/mql-systems/4ChannelSR_inc.git MqlIncludes/DS/4ChannelSR
+cd YourMT4(or5)Terminal/MQL4(or5)/Include
+mkdir DS
+ln -s MqlIncludes/DS/4ChannelSR ./DS/4ChannelSR
+```
+
+## Examples
+
+#### Script
+
+```mql5
+//+------------------------------------------------------------------+
+//|                                                   4ChannelSR.mqh |
+//|             Copyright 2022. Diamond Systems Corp. and Odiljon T. |
+//|                                   https://github.com/mql-systems |
+//+------------------------------------------------------------------+
+#property copyright "Copyright 2022. Diamond Systems Corp. and Odiljon T."
+#property link      "https://github.com/mql-systems"
+
+#include <DS\4ChannelSR\4ChannelSR.mqh>
+
+C4ChannelSR Chsr;
+
+//+------------------------------------------------------------------+
+//| Script program start function                                    |
+//+------------------------------------------------------------------+
+void OnStart()
+{
+   if (! Chsr.Init(_Symbol, PERIOD_MN1, 5))
+   {
+      Alert("Error initializing 4ChannelSR");
+      return;
+   }
+   if (! Chsr.Calculate())
+   {
+      Alert("Error when calculating 4ChannelSR data");
+      return;
+   }
+   
+   ChannelSRInfo ChsrInfo;
+   for (int i=0;i<Chsr.Total();i++)
+   {
+      ChsrInfo = Chsr.At(i);
+      Print("------");
+      Print("stepSR: ", ChsrInfo.stepSR);
+      Print("mainPrice: ", ChsrInfo.mainPrice);
+      Print("high: ", ChsrInfo.high);
+      Print("low: ", ChsrInfo.low);
+      Print("time: ", ChsrInfo.time);
+      Print("timeZoneStart: ", ChsrInfo.timeZoneStart);
+      Print("timeZoneEnd: ", ChsrInfo.timeZoneEnd);
+      Print("GetSupport(1): ", ChsrInfo.GetSupport(iHigh(_Symbol,_Period,0), 1));
+      Print("GetResistance(1): ", ChsrInfo.GetResistance(iLow(_Symbol,_Period,0), 1));
+   }
+}
+
+//+------------------------------------------------------------------+
+```
+
+#### Indicator
+
+There is a [real example](https://github.com/mql-systems/4ChannelSR_indicator) for the indicator.

@@ -115,16 +115,15 @@ bool C4ChannelSR::Calculate()
    //--- getting the data of new bars
    MqlRates barRates[];
    int barCnt = CopyRates(m_Symbol, m_Period, m_NewBarTime, newBarTime, barRates);
-   if (barCnt < 3 || m_NewBarTime != barRates[0].time)
+   if (barCnt < 2 || m_NewBarTime != barRates[0].time || newBarTime != barRates[barCnt-1].time)
       return false;
    
    //--- calc
-   int i = 1; // the zero element is always calculated
    int calcBarCnt = barCnt-1;
-   if (ArrayResize(m_ChsrData, m_ChsrTotal+calcBarCnt-1, 100) == -1)
+   if (ArrayResize(m_ChsrData, m_ChsrTotal+calcBarCnt, 100) == -1)
       return false;
    
-   for (; i<calcBarCnt; i++)
+   for (int i=0; i<calcBarCnt; i++)
    {
       m_ChsrData[m_ChsrTotal].high = barRates[i].high;
       m_ChsrData[m_ChsrTotal].low = barRates[i].low;

@@ -25,19 +25,25 @@ struct ChannelSRInfo
    datetime timeZoneStart;
    datetime timeZoneEnd;
    //---
-   double GetSupport(const double price, const int lineNumber)
+   double GetSupport(const double price, const int lineNumber = 1)
    {
+      double p;
       if (mainPrice > price)
-         return MathFloor((mainPrice-price)/stepSR)*stepSR-(lineNumber*stepSR);
-      else   
-         return MathCeil((price-mainPrice)/stepSR)*stepSR-(lineNumber*stepSR);
+         p = mainPrice-MathFloor((mainPrice-price)/stepSR)*stepSR;
+      else
+         p = mainPrice+MathCeil((price-mainPrice)/stepSR)*stepSR;
+      
+      return (p -= (lineNumber < 2) ? stepSR : stepSR*lineNumber);
    }
    //---
-   double GetResistance(const double price, const int lineNumber)
+   double GetResistance(const double price, const int lineNumber = 1)
    {
+      double p;
       if (mainPrice > price)
-         return MathCeil((mainPrice-price)/stepSR)*stepSR+(lineNumber*stepSR);
-      else   
-         return MathFloor((price-mainPrice)/stepSR)*stepSR+(lineNumber*stepSR);
+         p = mainPrice-MathCeil((mainPrice-price)/stepSR)*stepSR;
+      else
+         p = mainPrice+MathFloor((price-mainPrice)/stepSR)*stepSR;
+      
+      return (p += (lineNumber < 2) ? stepSR : stepSR*lineNumber);
    }
 };

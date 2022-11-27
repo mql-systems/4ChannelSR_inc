@@ -19,12 +19,13 @@ ln -s MqlIncludes/DS/4ChannelSR ./DS/4ChannelSR
 
 ```mql5
 //+------------------------------------------------------------------+
-//|                                                   4ChannelSR.mqh |
+//|                                               4ChannelSRTest.mqh |
 //|             Copyright 2022. Diamond Systems Corp. and Odiljon T. |
 //|                                   https://github.com/mql-systems |
 //+------------------------------------------------------------------+
 #property copyright "Copyright 2022. Diamond Systems Corp. and Odiljon T."
 #property link      "https://github.com/mql-systems"
+#property version   "1.00"
 
 #include <DS\4ChannelSR\4ChannelSR.mqh>
 
@@ -46,11 +47,16 @@ void OnStart()
       return;
    }
    
+   double high, low;
    ChannelSRInfo ChsrInfo;
+   
    for (int i=0;i<Chsr.Total();i++)
    {
       ChsrInfo = Chsr.At(i);
-      Print("------");
+      high = iHigh(_Symbol,_Period,i);
+      low = iLow(_Symbol,_Period,i);
+      
+      Print("------", i, "------");
       Print("stepSR: ", ChsrInfo.stepSR);
       Print("mainPrice: ", ChsrInfo.mainPrice);
       Print("high: ", ChsrInfo.high);
@@ -58,8 +64,8 @@ void OnStart()
       Print("time: ", ChsrInfo.time);
       Print("timeZoneStart: ", ChsrInfo.timeZoneStart);
       Print("timeZoneEnd: ", ChsrInfo.timeZoneEnd);
-      Print("GetSupport(1): ", ChsrInfo.GetSupport(iHigh(_Symbol,_Period,0), 1));
-      Print("GetResistance(1): ", ChsrInfo.GetResistance(iLow(_Symbol,_Period,0), 1));
+      Print("GetSupport(",high,", 1): ", ChsrInfo.GetSupport(high, 1));
+      Print("GetResistance(",low,", 1): ", ChsrInfo.GetResistance(low, i));
    }
 }
 

@@ -7,10 +7,8 @@ MultiMQL library for calculating support/resistance from the previous day, divid
 ## Installation
 
 ```bash
-git clone https://github.com/mql-systems/4ChannelSR_inc.git MqlIncludes/DS/4ChannelSR
-cd YourMT4(or5)Terminal/MQL4(or5)/Include
-mkdir DS
-ln -s MqlIncludes/DS/4ChannelSR ./DS/4ChannelSR
+cd "YourMT4(5)TerminalPath\MQL4(5)\Include"
+git clone https://github.com/mql-systems/4ChannelSR_inc.git MqlSystems/4ChannelSR
 ```
 
 ## Examples
@@ -20,14 +18,14 @@ ln -s MqlIncludes/DS/4ChannelSR ./DS/4ChannelSR
 ```mql5
 //+------------------------------------------------------------------+
 //|                                               4ChannelSRTest.mqh |
-//|             Copyright 2022. Diamond Systems Corp. and Odiljon T. |
+//|        Copyright 2022-2024. Diamond Systems Corp. and Odiljon T. |
 //|                                   https://github.com/mql-systems |
 //+------------------------------------------------------------------+
-#property copyright "Copyright 2022. Diamond Systems Corp. and Odiljon T."
+#property copyright "Copyright 2022-2024. Diamond Systems Corp. and Odiljon T."
 #property link      "https://github.com/mql-systems"
 #property version   "1.00"
 
-#include <DS\4ChannelSR\4ChannelSR.mqh>
+#include <MqlSystems/4ChannelSR/4ChannelSR.mqh>
 
 C4ChannelSR Chsr;
 

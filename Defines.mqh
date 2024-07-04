@@ -1,9 +1,9 @@
 //+------------------------------------------------------------------+
 //|                                                      Defines.mqh |
-//|             Copyright 2022. Diamond Systems Corp. and Odiljon T. |
+//|        Copyright 2022-2024. Diamond Systems Corp. and Odiljon T. |
 //|                                   https://github.com/mql-systems |
 //+------------------------------------------------------------------+
-#property copyright "Copyright 2022. Diamond Systems Corp. and Odiljon T."
+#property copyright "Copyright 2022-2024. Diamond Systems Corp. and Odiljon T."
 #property link      "https://github.com/mql-systems"
 
 #define CHSR_CALC_BARS_MIN 1
@@ -29,21 +29,21 @@ struct ChannelSRInfo
    {
       double p;
       if (mainPrice > price)
-         p = mainPrice-MathFloor((mainPrice-price)/stepSR)*stepSR;
+         p = mainPrice - MathFloor((mainPrice - price) / stepSR) * stepSR;
       else
-         p = mainPrice+MathCeil((price-mainPrice)/stepSR)*stepSR;
+         p = mainPrice+MathCeil((price - mainPrice) / stepSR) * stepSR;
       
-      return (p -= (lineNumber < 2) ? stepSR : stepSR*lineNumber);
+      return (p -= (lineNumber < 2) ? stepSR : stepSR * lineNumber);
    }
    //---
    double GetResistance(const double price, const int lineNumber = 1)
    {
       double p;
       if (mainPrice > price)
-         p = mainPrice-MathCeil((mainPrice-price)/stepSR)*stepSR;
+         p = mainPrice-MathCeil((mainPrice - price) / stepSR) * stepSR;
       else
-         p = mainPrice+MathFloor((price-mainPrice)/stepSR)*stepSR;
+         p = mainPrice+MathFloor((price - mainPrice) / stepSR) * stepSR;
       
-      return (p += (lineNumber < 2) ? stepSR : stepSR*lineNumber);
+      return (p += (lineNumber < 2) ? stepSR : stepSR * lineNumber);
    }
 };

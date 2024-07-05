@@ -6,9 +6,6 @@
 #property copyright "Copyright 2022-2024. Diamond Systems Corp. and Odiljon T."
 #property link      "https://github.com/mql-systems"
 
-#define CHSR_CALC_BARS_MIN 1
-#define CHSR_CALC_BARS_MAX 365
-
 //--- errors
 #define ERR_CHSR_INITIALIZED     1  // The class has already been initialized with other parameters
 #define ERR_CHSR_NOT_INITIALIZED 2  // The init() method is not running

@@ -33,7 +33,7 @@ public:
                         C4ChannelSR(void);
                        ~C4ChannelSR(void);
    //---
-   bool                 Init(const string symbol, const ENUM_TIMEFRAMES period, const int calcBarsCount);
+   bool                 Init(const string symbol, const ENUM_TIMEFRAMES period, const int calcPeriodsCount = 5);
    bool                 Calculate();
    //---
    string               Symbol() { return m_symbol;    };
@@ -59,8 +59,14 @@ C4ChannelSR::~C4ChannelSR()
 
 //+------------------------------------------------------------------+
 //| Initialization                                                   |
+//| ---------------                                                  |
+//| @param symbol Symbol                                             |
+//| @param period Period                                             |
+//| @param calcPeriodsCount The number of billing periods            |
+//|                         (from 1 to 365). The default is 5.       |
+//| @return bool                                                     |
 //+------------------------------------------------------------------+
-bool C4ChannelSR::Init(const string symbol, const ENUM_TIMEFRAMES period, const int calcBarsCount)
+bool C4ChannelSR::Init(const string symbol, const ENUM_TIMEFRAMES period, const int calcPeriodsCount)
 {
    //--- initialization check
    if (m_isInit)
@@ -80,7 +86,7 @@ bool C4ChannelSR::Init(const string symbol, const ENUM_TIMEFRAMES period, const 
    }
 
    //--- set the start time
-   int barShift = MathMin(MathMax(calcBarsCount, CHSR_CALC_BARS_MIN), CHSR_CALC_BARS_MAX) - 1;
+   int barShift = MathMin(MathMax(calcPeriodsCount, 1), 365) - 1;
    m_lastBarTime = iTime(symbol, period, barShift);
    if (m_lastBarTime == 0)
       return false;

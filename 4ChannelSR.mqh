@@ -1,9 +1,9 @@
 //+------------------------------------------------------------------+
 //|                                                   4ChannelSR.mqh |
-//|             Copyright 2022. Diamond Systems Corp. and Odiljon T. |
+//|        Copyright 2022-2024. Diamond Systems Corp. and Odiljon T. |
 //|                                   https://github.com/mql-systems |
 //+------------------------------------------------------------------+
-#property copyright "Copyright 2022. Diamond Systems Corp. and Odiljon T."
+#property copyright "Copyright 2022-2024. Diamond Systems Corp. and Odiljon T."
 #property link      "https://github.com/mql-systems"
 #property version   "1.01"
 
@@ -45,15 +45,17 @@ class C4ChannelSR
 //+------------------------------------------------------------------+
 //| Constructor                                                      |
 //+------------------------------------------------------------------+
-C4ChannelSR::C4ChannelSR():m_Init(false),
-                           m_ChsrTotal(0)
-{}
+C4ChannelSR::C4ChannelSR(): m_Init(false),
+                            m_ChsrTotal(0)
+{
+}
 
 //+------------------------------------------------------------------+
 //| Destructor                                                       |
 //+------------------------------------------------------------------+
 C4ChannelSR::~C4ChannelSR()
-{}
+{
+}
 
 //+------------------------------------------------------------------+
 //| Initialization                                                   |

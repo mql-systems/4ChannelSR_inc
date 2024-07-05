@@ -31,7 +31,7 @@ struct ChannelSRInfo
       if (mainPrice > price)
          p = mainPrice - MathFloor((mainPrice - price) / stepSR) * stepSR;
       else
-         p = mainPrice+MathCeil((price - mainPrice) / stepSR) * stepSR;
+         p = mainPrice + MathCeil((price - mainPrice) / stepSR) * stepSR;
       
       return (p -= (lineNumber < 2) ? stepSR : stepSR * lineNumber);
    }
@@ -40,9 +40,9 @@ struct ChannelSRInfo
    {
       double p;
       if (mainPrice > price)
-         p = mainPrice-MathCeil((mainPrice - price) / stepSR) * stepSR;
+         p = mainPrice - MathCeil((mainPrice - price) / stepSR) * stepSR;
       else
-         p = mainPrice+MathFloor((price - mainPrice) / stepSR) * stepSR;
+         p = mainPrice + MathFloor((price - mainPrice) / stepSR) * stepSR;
       
       return (p += (lineNumber < 2) ? stepSR : stepSR * lineNumber);
    }

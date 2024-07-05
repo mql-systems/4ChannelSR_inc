@@ -170,7 +170,7 @@ datetime C4ChannelSR::CalcNextZoneTime(const datetime dt)
 ChannelSRInfo C4ChannelSR::At(const int pos) const
 {
    if (pos > -1 && pos < m_ChsrTotal)
-      return m_ChsrData[pos];
+      return m_ChsrData[m_ChsrTotal - pos - 1];
    
    ChannelSRInfo ChsrEmpty;
    return ChsrEmpty;

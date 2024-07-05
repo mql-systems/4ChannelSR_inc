@@ -7,9 +7,10 @@
 #property link      "https://github.com/mql-systems"
 
 //--- errors
-#define ERR_CHSR_INITIALIZED     1  // The class has already been initialized with other parameters
-#define ERR_CHSR_NOT_INITIALIZED 2  // The init() method is not running
-#define ERR_CHSR_PERIOD          3  // Unsupported period. Works only with periods PERIOD_D1, PERIOD_W1, PERIOD_MN1
+#define ERR_FCHSR_INITIALIZED                   1001  // The class has already been initialized with other parameters
+#define ERR_FCHSR_NOT_INITIALIZED               1002  // The Init(...) method is not running
+#define ERR_FCHSR_POSITION_NOT_FOUND            1003  // The specified position was not found in C4ChannelSR
+#define ERR_FCHSR_COPYRATES_DATA_DOES_NOT_MATCH 1004  // The data returned by CopyRates() does not match the requested data
 
 //+------------------------------------------------------------------+
 //| ENUM_FCHSR_PERIODS - Periods for calculating 4ChanelSR           |
@@ -21,7 +22,9 @@ enum ENUM_FCHSR_PERIODS
    FCHSR_PERIOD_W1  = PERIOD_W1
 };
 
-//--- to collect 4ChannelSR data
+//+------------------------------------------------------------------+
+//| struct ChannelSRInfo - To collect 4ChannelSR data                |
+//+------------------------------------------------------------------+
 struct ChannelSRInfo
 {
    double   stepSR;

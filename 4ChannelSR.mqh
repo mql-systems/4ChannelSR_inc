@@ -76,7 +76,7 @@ bool C4ChannelSR::Init(const string symbol, const ENUM_FCHSR_PERIODS periodForCa
       if (StringCompare(m_symbol, _symbol) == 0 && m_period == (ENUM_TIMEFRAMES)periodForCalc)
          return true;
 
-      SetUserError(ERR_CHSR_INITIALIZED);
+      SetUserError(ERR_FCHSR_INITIALIZED);
       return false;
    }
 
@@ -104,7 +104,7 @@ bool C4ChannelSR::Calculate()
 {
    if (! m_isInit)
    {
-      SetUserError(ERR_CHSR_NOT_INITIALIZED);
+      SetUserError(ERR_FCHSR_NOT_INITIALIZED);
       return false;
    }
 
@@ -118,8 +118,13 @@ bool C4ChannelSR::Calculate()
    //--- getting the data of new bars
    MqlRates barRates[];
    int barCnt = CopyRates(m_symbol, m_period, m_lastBarTime, newBarTime, barRates);
-   if (barCnt < 2 || m_lastBarTime != barRates[0].time || newBarTime != barRates[barCnt - 1].time)
+   if (barCnt == -1)
       return false;
+   if (barCnt < 2 || m_lastBarTime != barRates[0].time || newBarTime != barRates[barCnt - 1].time)
+   {
+      SetUserError(ERR_FCHSR_COPYRATES_DATA_DOES_NOT_MATCH);
+      return false;
+   }
 
    //--- calc
    int calcBarCnt = barCnt - 1;
@@ -175,6 +180,7 @@ ChannelSRInfo C4ChannelSR::At(const int pos) const
    if (pos > -1 && pos < m_chsrTotal)
       return m_chsrData[m_chsrTotal - pos - 1];
 
+   SetUserError(ERR_FCHSR_POSITION_NOT_FOUND);
    ChannelSRInfo ChsrEmpty;
    return ChsrEmpty;
 }

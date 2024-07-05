@@ -11,6 +11,16 @@
 #define ERR_CHSR_NOT_INITIALIZED 2  // The init() method is not running
 #define ERR_CHSR_PERIOD          3  // Unsupported period. Works only with periods PERIOD_D1, PERIOD_W1, PERIOD_MN1
 
+//+------------------------------------------------------------------+
+//| ENUM_FCHSR_PERIODS - Periods for calculating 4ChanelSR           |
+//+------------------------------------------------------------------+
+enum ENUM_FCHSR_PERIODS
+{
+   FCHSR_PERIOD_D1  = PERIOD_D1,
+   FCHSR_PERIOD_MN1 = PERIOD_MN1,
+   FCHSR_PERIOD_W1  = PERIOD_W1
+};
+
 //--- to collect 4ChannelSR data
 struct ChannelSRInfo
 {

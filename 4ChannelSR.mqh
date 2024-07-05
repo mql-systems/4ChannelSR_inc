@@ -33,11 +33,11 @@ public:
                         C4ChannelSR(void);
                        ~C4ChannelSR(void);
    //---
-   bool                 Init(const string symbol, const ENUM_TIMEFRAMES period, const int calcPeriodsCount = 5);
+   bool                 Init(const string symbol, const ENUM_FCHSR_PERIODS periodForCalc = FCHSR_PERIOD_D1, const int calcPeriodsCount = 5);
    bool                 Calculate();
    //---
-   string               Symbol() { return m_symbol;    };
-   ENUM_TIMEFRAMES      Period() { return m_period;    };
+   string               Symbol() { return m_symbol; };
+   ENUM_FCHSR_PERIODS   Period() { return (ENUM_FCHSR_PERIODS)m_period; };
    int                  Total()  { return m_chsrTotal; };
    ChannelSRInfo        At(const int pos) const;
 };
@@ -60,40 +60,33 @@ C4ChannelSR::~C4ChannelSR()
 //+------------------------------------------------------------------+
 //| Initialization                                                   |
 //| ---------------                                                  |
-//| @param symbol Symbol                                             |
-//| @param period Period                                             |
+//| @param symbol           Symbol                                   |
+//| @param periodForCalc    Period                                   |
 //| @param calcPeriodsCount The number of billing periods            |
 //|                         (from 1 to 365). The default is 5.       |
 //| @return bool                                                     |
 //+------------------------------------------------------------------+
-bool C4ChannelSR::Init(const string symbol, const ENUM_TIMEFRAMES period, const int calcPeriodsCount)
+bool C4ChannelSR::Init(const string symbol, const ENUM_FCHSR_PERIODS periodForCalc, const int calcPeriodsCount)
 {
    //--- initialization check
    if (m_isInit)
    {
-      if (StringCompare(m_symbol, symbol) == 0 && m_period == period)
+      if (StringCompare(m_symbol, symbol) == 0 && m_period == (ENUM_TIMEFRAMES)periodForCalc)
          return true;
 
       SetUserError(ERR_CHSR_INITIALIZED);
       return false;
    }
 
-   //--- checking the period
-   if (period != PERIOD_D1 && period != PERIOD_W1 && period != PERIOD_MN1)
-   {
-      SetUserError(ERR_CHSR_INITIALIZED);
-      return false;
-   }
-
    //--- set the start time
    int barShift = MathMin(MathMax(calcPeriodsCount, 1), 365) - 1;
-   m_lastBarTime = iTime(symbol, period, barShift);
+   m_lastBarTime = iTime(symbol, (ENUM_TIMEFRAMES)periodForCalc, barShift);
    if (m_lastBarTime == 0)
       return false;
 
    //--- params
    m_symbol = symbol;
-   m_period = period;
+   m_period = (ENUM_TIMEFRAMES)periodForCalc;
    m_isInit = true;
 
    //--- start calculate

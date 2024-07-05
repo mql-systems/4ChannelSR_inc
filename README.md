@@ -34,7 +34,7 @@ C4ChannelSR Chsr;
 //+------------------------------------------------------------------+
 void OnStart()
 {
-   if (! Chsr.Init(_Symbol, PERIOD_MN1, 5))
+   if (! Chsr.Init(_Symbol, FCHSR_PERIOD_W1, 10))
    {
       Alert("Error initializing 4ChannelSR");
       return;
@@ -45,14 +45,16 @@ void OnStart()
       return;
    }
    
-   double high, low;
    ChannelSRInfo ChsrInfo;
+   double supportPrice, resistancePrice;
+   double bid = SymbolInfoDouble(_Symbol, SYMBOL_BID);
+   string bidStr = DoubleToString(bid, _Digits);
    
-   for (int i=0;i<Chsr.Total();i++)
+   for (int i = 0; i < Chsr.Total(); i++)
    {
       ChsrInfo = Chsr.At(i);
-      high = iHigh(_Symbol,_Period,i);
-      low = iLow(_Symbol,_Period,i);
+      supportPrice = ChsrInfo.GetSupport(bid, 1);          // Support 1
+      resistancePrice = ChsrInfo.GetResistance(bid, 1);    // Resistance 1
       
       Print("------", i, "------");
       Print("stepSR: ", ChsrInfo.stepSR);
@@ -62,8 +64,8 @@ void OnStart()
       Print("time: ", ChsrInfo.time);
       Print("timeZoneStart: ", ChsrInfo.timeZoneStart);
       Print("timeZoneEnd: ", ChsrInfo.timeZoneEnd);
-      Print("GetSupport(",high,", 1): ", ChsrInfo.GetSupport(high, 1));
-      Print("GetResistance(",low,", 1): ", ChsrInfo.GetResistance(low, i));
+      Print(StringFormat("GetSupport(%s, 1): %s", bidStr, DoubleToString(supportPrice, _Digits)));
+      Print(StringFormat("GetResistance(%s, 1): %s", bidStr, DoubleToString(resistancePrice, _Digits)));
    }
 }
 

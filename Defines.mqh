@@ -7,10 +7,10 @@
 #property link      "https://github.com/mql-systems"
 
 //--- errors
-#define ERR_FCHSR_INITIALIZED                   1001  // The class has already been initialized with other parameters
-#define ERR_FCHSR_NOT_INITIALIZED               1002  // The Init(...) method is not running
-#define ERR_FCHSR_POSITION_NOT_FOUND            1003  // The specified position was not found in C4ChannelSR
-#define ERR_FCHSR_COPYRATES_DATA_DOES_NOT_MATCH 1004  // The data returned by CopyRates() does not match the requested data
+#define ERR_FCHSR_INITIALIZED                   464 + 1001  // The class has already been initialized with other parameters
+#define ERR_FCHSR_NOT_INITIALIZED               464 + 1002  // The Init(...) method is not running
+#define ERR_FCHSR_POSITION_NOT_FOUND            464 + 1003  // The specified position was not found in C4ChannelSR
+#define ERR_FCHSR_COPYRATES_DATA_DOES_NOT_MATCH 464 + 1004  // The data returned by CopyRates() does not match the requested data
 
 //+------------------------------------------------------------------+
 //| ENUM_FCHSR_PERIODS - Periods for calculating 4ChanelSR           |

@@ -20,6 +20,8 @@ private:
    bool                 m_isInit;
    string               m_symbol;
    ENUM_TIMEFRAMES      m_period;
+   ENUM_FCHSR_PERIODS   m_periodForCalc;
+   int                  m_minPeriodsCount;
    //---
    datetime             m_lastBarTime;
    //---
@@ -33,13 +35,13 @@ public:
                         C4ChannelSR(void);
                        ~C4ChannelSR(void);
    //---
-   bool                 Init(const string symbol = NULL, const ENUM_FCHSR_PERIODS periodForCalc = FCHSR_PERIOD_D1, const int calcPeriodsCount = 5);
-   bool                 Calculate();
+   bool                 Init(const string symbol = NULL, const ENUM_FCHSR_PERIODS periodForCalc = FCHSR_PERIOD_D1, const int minPeriodsCount = 5);
+   bool                 Calculate(void);
    //---
-   string               Symbol() { return m_symbol; };
-   ENUM_FCHSR_PERIODS   Period() { return (ENUM_FCHSR_PERIODS)m_period; };
-   int                  Total()  { return m_chsrTotal; };
-   void                 Clear()  { ArrayFree(m_chsrData); m_chsrTotal = 0; m_lastBarTime = 0; };
+   string               Symbol(void) { return m_symbol; };
+   ENUM_FCHSR_PERIODS   Period(void) { return m_periodForCalc; };
+   int                  Total(void)  { return m_chsrTotal; };
+   void                 Clear(void)  { ArrayFree(m_chsrData); m_chsrTotal = 0; m_lastBarTime = 0; };
    ChannelSRInfo        At(const int pos) const;
 };
 
@@ -49,6 +51,7 @@ public:
 C4ChannelSR::C4ChannelSR() : m_isInit(false),
                              m_symbol(NULL),
                              m_period(NULL),
+                             m_minPeriodsCount(0),
                              m_lastBarTime(0),
                              m_chsrTotal(0)
 {
@@ -66,11 +69,11 @@ C4ChannelSR::~C4ChannelSR()
 //| ---------------                                                  |
 //| @param symbol           Symbol. Default: Current symbol          |
 //| @param periodForCalc    Period. Default: FCHSR_PERIOD_D1         |
-//| @param calcPeriodsCount The number of billing periods            |
+//| @param minPeriodsCount  The minimum number of billing periods    |
 //|                         (from 1 to 365). Default: 5              |
 //| @return bool                                                     |
 //+------------------------------------------------------------------+
-bool C4ChannelSR::Init(const string symbol, const ENUM_FCHSR_PERIODS periodForCalc, const int calcPeriodsCount)
+bool C4ChannelSR::Init(const string symbol, const ENUM_FCHSR_PERIODS periodForCalc, const int minPeriodsCount)
 {
    string _symbol = symbol == NULL ? _Symbol : symbol;
 
@@ -84,16 +87,12 @@ bool C4ChannelSR::Init(const string symbol, const ENUM_FCHSR_PERIODS periodForCa
       return false;
    }
 
-   //--- set the start time
-   int barShift = MathMin(MathMax(calcPeriodsCount, 1), 365) - 1;
-   m_lastBarTime = iTime(_symbol, (ENUM_TIMEFRAMES)periodForCalc, barShift);
-   if (m_lastBarTime == 0)
-      return false;
-
    //--- params
+   m_isInit = true;
    m_symbol = _symbol;
    m_period = (ENUM_TIMEFRAMES)periodForCalc;
-   m_isInit = true;
+   m_periodForCalc = periodForCalc;
+   m_minPeriodsCount = minPeriodsCount;
 
    //--- start calculate
    Calculate();
@@ -104,12 +103,21 @@ bool C4ChannelSR::Init(const string symbol, const ENUM_FCHSR_PERIODS periodForCa
 //+------------------------------------------------------------------+
 //| Calculation                                                      |
 //+------------------------------------------------------------------+
-bool C4ChannelSR::Calculate()
+bool C4ChannelSR::Calculate(void)
 {
    if (! m_isInit)
    {
       SetUserError(ERR_FCHSR_NOT_INITIALIZED);
       return false;
+   }
+
+   //--- set the start time
+   if (m_lastBarTime == 0)
+   {
+      int barShift = MathMin(MathMax(m_minPeriodsCount, 1), 365) - 1;
+      m_lastBarTime = iTime(m_symbol, m_period, barShift);
+      if (m_lastBarTime == 0)
+         return false;
    }
 
    //--- new bar

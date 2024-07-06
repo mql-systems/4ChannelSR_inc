@@ -39,6 +39,7 @@ public:
    string               Symbol() { return m_symbol; };
    ENUM_FCHSR_PERIODS   Period() { return (ENUM_FCHSR_PERIODS)m_period; };
    int                  Total()  { return m_chsrTotal; };
+   void                 Clear()  { ArrayFree(m_chsrData); m_chsrTotal = 0; m_lastBarTime = 0; };
    ChannelSRInfo        At(const int pos) const;
 };
 
@@ -46,6 +47,9 @@ public:
 //| Constructor                                                      |
 //+------------------------------------------------------------------+
 C4ChannelSR::C4ChannelSR() : m_isInit(false),
+                             m_symbol(NULL),
+                             m_period(NULL),
+                             m_lastBarTime(0),
                              m_chsrTotal(0)
 {
 }

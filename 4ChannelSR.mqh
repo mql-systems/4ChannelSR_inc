@@ -4,8 +4,7 @@
 //|                                   https://github.com/mql-systems |
 //+------------------------------------------------------------------+
 #property copyright "Copyright 2022-2024. Diamond Systems Corp. and Odiljon T."
-#property link "https://github.com/mql-systems"
-#property version "1.02"
+#property link      "https://github.com/mql-systems"
 
 #include "Defines.mqh"
 
@@ -22,6 +21,7 @@ private:
    ENUM_TIMEFRAMES      m_period;
    ENUM_FCHSR_PERIODS   m_periodForCalc;
    int                  m_minPeriodsCount;
+   ENUM_FCHSR_TYPE      m_chsrType;
    //---
    datetime             m_lastBarTime;
    //---
@@ -35,12 +35,15 @@ public:
                         C4ChannelSR(void);
                        ~C4ChannelSR(void);
    //---
-   bool                 Init(const string symbol = NULL, const ENUM_FCHSR_PERIODS periodForCalc = FCHSR_PERIOD_D1, const int minPeriodsCount = 5);
+   bool                 Init(const string symbol = NULL,
+                             const ENUM_FCHSR_PERIODS periodForCalc = FCHSR_PERIOD_D1,
+                             const ENUM_FCHSR_TYPE chsrType = FCHSR_TYPE_HL,
+                             const int minPeriodsCount = 5);
    bool                 Calculate(void);
    //---
-   string               Symbol(void) { return m_symbol; };
+   string               Symbol(void) { return m_symbol;        };
    ENUM_FCHSR_PERIODS   Period(void) { return m_periodForCalc; };
-   int                  Total(void)  { return m_chsrTotal; };
+   int                  Total(void)  { return m_chsrTotal;     };
    void                 Clear(void)  { ArrayFree(m_chsrData); m_chsrTotal = 0; m_lastBarTime = 0; };
    ChannelSRInfo        At(const int pos) const;
 };
@@ -62,6 +65,7 @@ C4ChannelSR::C4ChannelSR() : m_isInit(false),
 //+------------------------------------------------------------------+
 C4ChannelSR::~C4ChannelSR()
 {
+   Clear();
 }
 
 //+------------------------------------------------------------------+
@@ -73,16 +77,16 @@ C4ChannelSR::~C4ChannelSR()
 //|                         (from 1 to 365). Default: 5              |
 //| @return bool                                                     |
 //+------------------------------------------------------------------+
-bool C4ChannelSR::Init(const string symbol, const ENUM_FCHSR_PERIODS periodForCalc, const int minPeriodsCount)
+bool C4ChannelSR::Init(const string symbol,
+                       const ENUM_FCHSR_PERIODS periodForCalc,
+                       const ENUM_FCHSR_TYPE chsrType,
+                       const int minPeriodsCount)
 {
    string _symbol = symbol == NULL ? _Symbol : symbol;
 
    //--- initialization check
    if (m_isInit)
    {
-      if (StringCompare(m_symbol, _symbol) == 0 && m_period == (ENUM_TIMEFRAMES)periodForCalc)
-         return true;
-
       SetUserError(ERR_FCHSR_INITIALIZED);
       return false;
    }
@@ -93,11 +97,10 @@ bool C4ChannelSR::Init(const string symbol, const ENUM_FCHSR_PERIODS periodForCa
    m_period = (ENUM_TIMEFRAMES)periodForCalc;
    m_periodForCalc = periodForCalc;
    m_minPeriodsCount = minPeriodsCount;
+   m_chsrType = chsrType;
 
    //--- start calculate
-   Calculate();
-
-   return true;
+   return Calculate();
 }
 
 //+------------------------------------------------------------------+
@@ -145,15 +148,28 @@ bool C4ChannelSR::Calculate(void)
 
    for (int i = 0; i < calcBarCnt; i++)
    {
-      m_chsrData[m_chsrTotal].high = barRates[i].high;
-      m_chsrData[m_chsrTotal].low = barRates[i].low;
-      m_chsrData[m_chsrTotal].stepSR = (barRates[i].high - barRates[i].low) / 4;
-      m_chsrData[m_chsrTotal].mainPrice = m_chsrData[m_chsrTotal].stepSR * 2 + barRates[i].low;
-      //---
+      if (m_chsrType == FCHSR_TYPE_HL)
+      {
+         m_chsrData[m_chsrTotal].high = barRates[i].high;
+         m_chsrData[m_chsrTotal].low = barRates[i].low;
+      }
+      else if (barRates[i].open > barRates[i].close)
+      {
+         m_chsrData[m_chsrTotal].high = barRates[i].open;
+         m_chsrData[m_chsrTotal].low = barRates[i].close;
+      }
+      else
+      {
+         m_chsrData[m_chsrTotal].high = barRates[i].close;
+         m_chsrData[m_chsrTotal].low = barRates[i].open;
+      }
+      
+      m_chsrData[m_chsrTotal].stepSR = (m_chsrData[m_chsrTotal].high - m_chsrData[m_chsrTotal].low) / 4;
+      m_chsrData[m_chsrTotal].mainPrice = m_chsrData[m_chsrTotal].stepSR * 2 + m_chsrData[m_chsrTotal].low;
       m_chsrData[m_chsrTotal].time = barRates[i].time;
       m_chsrData[m_chsrTotal].timeZoneStart = barRates[i + 1].time;
       m_chsrData[m_chsrTotal].timeZoneEnd = (i + 2 < barCnt) ? barRates[i + 2].time : CalcNextZoneTime(m_chsrData[m_chsrTotal].timeZoneStart);
-      //---
+      
       m_chsrTotal++;
    }
 

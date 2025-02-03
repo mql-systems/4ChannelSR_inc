@@ -23,6 +23,15 @@ enum ENUM_FCHSR_PERIODS
 };
 
 //+------------------------------------------------------------------+
+//| ENUM_FCHSR_TYPE - Type of channels (High/Low or Open/Close)      |
+//+------------------------------------------------------------------+
+enum ENUM_FCHSR_TYPE
+{
+   FCHSR_TYPE_HL, // High/Low
+   FCHSR_TYPE_OC  // Open/Close
+};
+
+//+------------------------------------------------------------------+
 //| struct ChannelSRInfo - To collect 4ChannelSR data                |
 //+------------------------------------------------------------------+
 struct ChannelSRInfo
